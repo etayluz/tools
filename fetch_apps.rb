@@ -7,16 +7,15 @@ files = Dir.entries("ios-business")
 h = {}
 
 files.each { |file|  
-	# puts file
 	doc = Nokogiri::HTML(open('./ios-business/' + file))
-	# puts doc
 	doc.xpath('//a[@href]').each do |link|
 		if ((link['href'].include? "https://itunes.apple.com/us/app/") && !h.has_key?(link.text.strip))
 	  		h[link.text.strip] = link['href']
 	  	end
 	end
-	# puts h
 }
+
+h = h.sort
 
 # file = File.open("./log.xls", "w")
 # h.each do |key, value|
