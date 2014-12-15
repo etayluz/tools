@@ -23,7 +23,7 @@ h = h.sort
 #     # file.write(key + '\t' + value + '\n')
 # end
 # file.close
-CSV.open("./file.csv", "wb") do |csv|
+CSV.open("./apps.csv", "wb") do |csv|
   h.each do |key, value|
       csv << [key, value]
   end
