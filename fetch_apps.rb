@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
+require "csv"
 
 files = Dir.entries("ios-business")
 
@@ -17,9 +18,18 @@ files.each { |file|
 	# puts h
 }
 
-h.each do |key, value|
-    puts key + ' : ' + value
+# file = File.open("./log.xls", "w")
+# h.each do |key, value|
+#     puts key + ' : ' + value 
+#     # file.write(key + '\t' + value + '\n')
+# end
+# file.close
+CSV.open("./file.csv", "wb") do |csv|
+  h.each do |key, value|
+      csv << [key, value]
+  end
 end
+
 # doc = Nokogiri::HTML(open('./ios-business/id6000-mt=8&letter=A&page=2.html'))
 # https://itunes.apple.com/us/app
 # l = doc.css('a').map { |link| link['href'] }
