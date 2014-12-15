@@ -3,12 +3,38 @@ require 'open-uri'
 
 files = Dir.entries("ios-business")
 
-# files.each { |file|  
-# 	# puts file
-# 	doc = Nokogiri::HTML(open('./ios-business/' + file))
-# 	puts doc
-# }
-doc = Nokogiri::HTML(open('./ios-business/id6000-mt=8.html'))
+files.each { |file|  
+	# puts file
+	doc = Nokogiri::HTML(open('./ios-business/' + file))
+	# puts doc
+	h = {}
+	doc.xpath('//a[@href]').each do |link|
+		if (link['href'].include? "https://itunes.apple.com/us/app/")
+	  		h[link.text.strip] = link['href']
+	  	end
+	end
+	# puts h
+
+	h.each do |key, value|
+	    puts key + ' : ' + value
+	end
+}
+# doc = Nokogiri::HTML(open('./ios-business/id6000-mt=8&letter=A&page=2.html'))
+# https://itunes.apple.com/us/app
+# l = doc.css('a').map { |link| link['href'] }
+# puts l
+
+# h = {}
+# doc.xpath('//a[@href]').each do |link|
+# 	if (link['href'].include? "https://itunes.apple.com/us/app/")
+#   		h[link.text.strip] = link['href']
+#   	end
+# end
+# # puts h
+
+# h.each do |key, value|
+#     puts key + ' : ' + value
+# end
 
 # puts doc
 # puts 'curl https://itunes.apple.com/us/genre/ios-business/id6000?mt=8&letter=A&page=1#page'
