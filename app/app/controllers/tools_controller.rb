@@ -15,10 +15,33 @@ class ToolsController < ApplicationController
 		end
 	end
 
+	def getWebsites
+		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+		while apps.size == 1  do
+			app = apps[0]
+			puts app.name
+			puts app.iTunes
+	 		doc = Nokogiri::HTML(open(app.iTunes))
+	 		array = doc.css('div.app-links a').map { |link| 
+				url = link['href'] 
+				url = Domainatrix.parse(url)
+				url.domain + "." + url.public_suffix
+	 	  	}
+	 	 	array.uniq!
+	 	 	if (array.size > 0)
+	 	 		app.website = array.join(', ')
+	 	 		puts app.website
+	 	 	else
+	 	 		app.website = "NONE"
+	 	 	end
+	 	 	app.save
+	 	 	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+		end
+	end
+
 	def run
 		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 		if (apps.size == 1)
-			app = apps
 			puts app[0].name
 		end
 		# CSV.foreach("../apps.csv", headers: true) do |row|
