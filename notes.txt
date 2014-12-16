@@ -2,5 +2,6 @@
 * Settings->General->Path Constraint->Directory
 * In Web URL -> https://itunes.apple.com/us/genre/ios-business/id6000?mt=8
 * Click Download (will take about a minute)
-* Move downloaded directory to repo and add to .gitignore file
+* Move downloaded directory to repo and add directory's name to .gitignore file
+* "ruby fetch_apps.rb" will generate a list of apps and their iTunes links
 
