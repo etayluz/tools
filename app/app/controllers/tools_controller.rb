@@ -1,4 +1,8 @@
-require 'csv'
+require 'nokogiri'
+require 'open-uri'
+require "csv"
+require 'uri'
+require 'domainatrix'
 
 class ToolsController < ApplicationController
 	def run
