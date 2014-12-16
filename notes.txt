@@ -1,7 +1,17 @@
+FETCH LINKS
 * Use Site Sucker with default settings
 * Settings->General->Path Constraint->Directory
 * In Web URL -> https://itunes.apple.com/us/genre/ios-business/id6000?mt=8
 * Click Download (will take about a minute)
 * Move downloaded directory to repo and add directory's name to .gitignore file
-* "ruby fetch_apps.rb" will generate a list of apps and their iTunes links
+* Run fetch_apps.rb to generate a list of apps and their iTunes links
+* Run get_appsite.rb to fetch the website listed in the iTunes page of each app
 
+RAILS APP
+* In root directory: rails new app
+* cd app
+* rails g controller tools
+* rails g model Apps name:string iTunes:string website:string
+* rake db:migrate
+* For every new method insdie tools, must create a corresponding method.html.erb inside views/tools
+* Add all needed gems to Gemfile, then run: bundle install
