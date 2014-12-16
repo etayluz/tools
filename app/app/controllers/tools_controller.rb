@@ -17,11 +17,11 @@ class ToolsController < ApplicationController
 
 	def getWebsites
 		t1=Thread.new{func1()}
-		# t2=Thread.new{func1()}
-		# t3=Thread.new{func1()}
-		# t4=Thread.new{func1()}
-		# t5=Thread.new{func1()}
-		# t6=Thread.new{func1()}
+		t2=Thread.new{func1()}
+		t3=Thread.new{func1()}
+		t4=Thread.new{func1()}
+		t5=Thread.new{func1()}
+		t6=Thread.new{func1()}
 		t1.join
 		# t2.join
 		# t3.join
@@ -31,8 +31,10 @@ class ToolsController < ApplicationController
 	end
 
 	def func1
+		puts Thread.current
 	  	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 		while apps.size == 1  do
+			puts Thread.current
 			app = apps[0]
 			puts app.name
 			puts app.iTunes
