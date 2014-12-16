@@ -5,20 +5,33 @@ require 'uri'
 require 'domainatrix'
 
 class ToolsController < ApplicationController
-	def run
+	def loadApps
 		CSV.foreach("../apps.csv", headers: true) do |row|
-		puts row[1]
-	  	doc = Nokogiri::HTML(open(row[1]))
-	 	array = doc.css('div.app-links a').map { |link| 
-		  	url = link['href'] 
-			url = Domainatrix.parse(url)
-			url.domain + "." + url.public_suffix
-	  	}
-	  	array.uniq!
-		record_to_insert = Hash["name" => row[0], "iTunes" => row[1], "website" => array.join(', ')]
-		records_to_insert = []
-		records_to_insert << Apps.new(record_to_insert)
-		Apps.import(records_to_insert)
+			puts row[1]
+			record_to_insert = Hash["name" => row[0], "iTunes" => row[1]]
+			records_to_insert = []
+			records_to_insert << Apps.new(record_to_insert)
+			Apps.import(records_to_insert)
+		end
+	end
+
+	def run
+		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+		apps.map { |app| puts app.name } 
+
+		# CSV.foreach("../apps.csv", headers: true) do |row|
+		# puts row[1]
+	 #  	doc = Nokogiri::HTML(open(row[1]))
+	 # 	array = doc.css('div.app-links a').map { |link| 
+		#   	url = link['href'] 
+		# 	url = Domainatrix.parse(url)
+		# 	url.domain + "." + url.public_suffix
+	 #  	}
+	 #  	array.uniq!
+		# record_to_insert = Hash["name" => row[0], "iTunes" => row[1], "website" => array.join(', ')]
+		# records_to_insert = []
+		# records_to_insert << Apps.new(record_to_insert)
+		# Apps.import(records_to_insert)
 	end
 
 		# puts "hello"
@@ -49,5 +62,4 @@ class ToolsController < ApplicationController
 		# 	# 	break
 		# 	# end
 		
-	end
 end

@@ -5,7 +5,7 @@ FETCH LINKS
 * Click Download (will take about a minute)
 * Move downloaded directory to repo and add directory's name to .gitignore file
 * Run fetch_apps.rb to generate a list of apps and their iTunes links
-* Run get_appsite.rb to fetch the website listed in the iTunes page of each app
+* curl http://localhost:3000/loadApps to load apps into database
 
 RAILS APP
 * In root directory: rails new myapp --database=postgresql
