@@ -17,8 +17,10 @@ class ToolsController < ApplicationController
 
 	def run
 		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
-		apps.map { |app| puts app.name } 
-
+		if (apps.size == 1)
+			app = apps
+			puts app[0].name
+		end
 		# CSV.foreach("../apps.csv", headers: true) do |row|
 		# puts row[1]
 	 #  	doc = Nokogiri::HTML(open(row[1]))
