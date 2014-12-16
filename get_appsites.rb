@@ -2,22 +2,33 @@ require 'nokogiri'
 require 'open-uri'
 require "csv"
 require 'uri'
+require 'domainatrix'
 
 CSV.foreach("./apps.csv", headers: true) do |row|
   puts row[1]
   doc = Nokogiri::HTML(open(row[1]))
 
 
-  array = doc.css('div.app-links a').map { |link| link['href'] }
+  array = doc.css('div.app-links a').map { |link| 
+
+  	url = link['href'] 
+  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
+	  # host = URI.parse(url).host.downcase
+	  # url = host.start_with?('www.') ? host[4..-1] : host
+	url = Domainatrix.parse(url)
+	url.domain + "." + url.public_suffix
+
+
+  }
   array.uniq!
   array.each { |url| 
   	# puts url 
-  	  url = "http://#{url}" if URI.parse(url).scheme.nil?
-	  host = URI.parse(url).host.downcase
-	  test = host.start_with?('www.') ? host[4..-1] : host
-	  puts test
+  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
+	  # host = URI.parse(url).host.downcase
+	  # test = host.start_with?('www.') ? host[4..-1] : host
+	  puts url
   }
-  puts
+  # puts
 end
 
 # csv_text = File.read('...')
