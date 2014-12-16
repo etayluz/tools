@@ -4,32 +4,38 @@ require "csv"
 require 'uri'
 require 'domainatrix'
 
-CSV.foreach("./apps.csv", headers: true) do |row|
-  puts row[1]
-  doc = Nokogiri::HTML(open(row[1]))
+CSV.open("./apps1.csv", "wb") do |csv|
+      
+  
+	CSV.foreach("./apps.csv", headers: true) do |row|
+	  puts row[1]
+	  doc = Nokogiri::HTML(open(row[1]))
 
 
-  array = doc.css('div.app-links a').map { |link| 
+	  array = doc.css('div.app-links a').map { |link| 
 
-  	url = link['href'] 
-  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
-	  # host = URI.parse(url).host.downcase
-	  # url = host.start_with?('www.') ? host[4..-1] : host
-	url = Domainatrix.parse(url)
-	url.domain + "." + url.public_suffix
+	  	url = link['href'] 
+	  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
+		  # host = URI.parse(url).host.downcase
+		  # url = host.start_with?('www.') ? host[4..-1] : host
+		url = Domainatrix.parse(url)
+		url.domain + "." + url.public_suffix
 
 
-  }
-  array.uniq!
-  array.each { |url| 
-  	# puts url 
-  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
-	  # host = URI.parse(url).host.downcase
-	  # test = host.start_with?('www.') ? host[4..-1] : host
-	  puts url
-  }
-  # puts
+	  }
+	  array.uniq!
+	  array.each { |url| 
+	  	# puts url 
+	  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
+		  # host = URI.parse(url).host.downcase
+		  # test = host.start_with?('www.') ? host[4..-1] : host
+		  puts url
+		  csv << [row[0], row[1], url]
+	  }
+	  # puts
+	end
 end
+
 
 # csv_text = File.read('...')
 
