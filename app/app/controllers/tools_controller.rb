@@ -28,7 +28,11 @@ class ToolsController < ApplicationController
 		  	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
 			  # host = URI.parse(url).host.downcase
 			  # test = host.start_with?('www.') ? host[4..-1] : host
-			  puts url
+			puts url
+			record_to_insert = Hash["name" => row[0], "iTunes" => row[1], "website" => row[2]]
+			records_to_insert = []
+			records_to_insert << Apps.new(record_to_insert)
+			Apps.import(records_to_insert)
 			  # csv << [row[0], row[1], url]
 		  }
 		  # puts

@@ -8,10 +8,21 @@ FETCH LINKS
 * Run get_appsite.rb to fetch the website listed in the iTunes page of each app
 
 RAILS APP
-* In root directory: rails new app
+* In root directory: rails new myapp --database=postgresql
 * cd app
 * rails g controller tools
 * rails g model Apps name:string iTunes:string website:string
+* In config/database.yml - copy the Develop from another app
+* rake db:setup
 * rake db:migrate
 * For every new method insdie tools, must create a corresponding method.html.erb inside views/tools
 * Add all needed gems to Gemfile, then run: bundle install
+
+NAVCAT
+* Connection->PostgresSQL
+* Connection Name: Apps
+* Host Name/IP Address: localhost
+* Port: 5432
+* Default Database: apps_development
+* User Name: admin
+* Password: password5!
