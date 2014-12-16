@@ -16,7 +16,22 @@ class ToolsController < ApplicationController
 	end
 
 	def getWebsites
-		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+		t1=Thread.new{func1()}
+		# t2=Thread.new{func1()}
+		# t3=Thread.new{func1()}
+		# t4=Thread.new{func1()}
+		# t5=Thread.new{func1()}
+		# t6=Thread.new{func1()}
+		t1.join
+		# t2.join
+		# t3.join
+		# t4.join
+		# t5.join
+		# t6.join
+	end
+
+	def func1
+	  	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 		while apps.size == 1  do
 			app = apps[0]
 			puts app.name
@@ -36,7 +51,7 @@ class ToolsController < ApplicationController
 	 	 	end
 	 	 	app.save
 	 	 	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
-		end
+		end 
 	end
 
 	def run
@@ -58,33 +73,5 @@ class ToolsController < ApplicationController
 		# records_to_insert << Apps.new(record_to_insert)
 		# Apps.import(records_to_insert)
 	end
-
-		# puts "hello"
-		# logger.debug "test"
-		# i = 0
-		# File.delete('stocks.csv') if File.exist?('stocks.csv')
-		# Dir.foreach('../stockList') do |file|
-		# 	next if file == '.' or file == '..'
-		# 	stock = file.gsub(".csv", "")
-		# 	#puts stock
-		# 	records_to_insert = []
-		# 	File.open('../stockList/'+file).each do |line|
-		# 		next if line.include? "Open"
-		# 		break if line.include? "doctype"
-		# 		info = []
-		# 		info = line.split(',')
-		# 		#puts array[0]
-		# 		record_to_insert = Hash["stock" => stock, "date" => info[0], "open" => info[1], "high" => info[2], 
-		# 							 "low" => info[3], "close" => info[4],"volume" => info[5],"adj_close" => info[6]]
-		# 		#Stock.create!(record_to_insert)
-		# 		#puts row_to_insert
-		# 		records_to_insert << Stock.new(record_to_insert)
-		# 	end
-		# 	#puts records_to_insert
-		# 	Stock.import(records_to_insert)			
-		# 	# i = i + 1
-		# 	# if (i == 2)
-		# 	# 	break
-		# 	# end
 		
 end

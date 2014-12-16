@@ -6,6 +6,7 @@ FETCH LINKS
 * Move downloaded directory to repo and add directory's name to .gitignore file
 * Run fetch_apps.rb to generate a list of apps and their iTunes links
 * curl http://localhost:3000/loadApps to load apps into database
+* curl http://localhost:3000/getWebsites to scrape for app websites
 
 RAILS APP
 * In root directory: rails new myapp --database=postgresql
@@ -19,10 +20,12 @@ RAILS APP
 * Add all needed gems to Gemfile, then run: bundle install
 
 NAVCAT
-* Connection->PostgresSQL
-* Connection Name: Apps
-* Host Name/IP Address: localhost
-* Port: 5432
-* Default Database: apps_development
-* User Name: admin
-* Password: password5!
+* Setup:
+	* Connection->PostgresSQL
+	* Connection Name: Apps
+	* Host Name/IP Address: localhost
+	* Port: 5432
+	* Default Database: apps_development
+	* User Name: admin
+	* Password: password5!
+* EXAMPLE QUERY: SELECT name,website FROM apps WHERE website IS NOT NULL
