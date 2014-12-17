@@ -64,6 +64,92 @@ class ToolsController < ApplicationController
 		end 
 	end
 
+	def getEmails
+		apps = Apps.order("RANDOM()").where("apps.email IS NULL AND apps.website iS NOT NULL").take(1)
+		app = apps[0]
+		puts app.website
+		website = app.website
+		if app.website.include? ","
+			websites = app.website.split(',')
+			website = websites[0]
+		end
+		emails = [];
+		# website = "aeronet.com"
+	    url = 'http://' + website
+	    puts url
+	    # url = 'http://fca-magazine.com'
+	    begin
+			html_string = open(url){|f|f.read}
+		rescue
+			app.email = "NONE"
+			app.save
+			getEmails		
+		end
+		# puts html_string
+		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
+		the_emails = html_string.scan(r).uniq
+		# puts the_emails[0]
+		hrefs = []
+		emails.concat the_emails
+
+		if emails.size == 0
+			doc = Nokogiri::HTML(html_string)
+			hrefs = doc.css("a").map do |link|
+				href = link.attr("href")
+				if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
+					# puts url
+					# puts href
+					begin
+				 		URI.join( url, href ).to_s
+				 		
+				 	rescue
+				 		next
+				 	end
+				end
+			end.compact.uniq
+			# STDOUT.puts(hrefs.join("\n"))
+		end
+		hrefs.reject! {|href| !href.include? url}
+		# puts hrefs
+		hrefs.each do |the_url|
+			the_emails = self.loadURL(the_url)
+			# puts the_url
+			if (!the_emails.nil?)
+				# puts the_emails
+				emails.concat the_emails
+			end
+			# puts email_addresses
+		end
+		emails.uniq!
+		emails.reject! {|email| email.include? "example."}
+		emails.reject! {|email| email.include? "domain."}
+		puts emails.join(', ')
+		if (emails.size > 0)
+			app.email = emails.join(', ')
+		else
+			app.email = "NONE"
+			puts "No emails found"
+		end
+		app.save
+		getEmails
+	end
+
+	def loadURL(url)
+		puts url
+		begin
+			html_string = open(url){|f|f.read}
+		rescue
+			html_string = ""
+		end
+		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
+		emails = html_string.scan(r).uniq
+		# puts emails
+		if emails.size > 0
+			# puts emails
+			return emails
+		end
+	end
+
 	def run
 		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 		if (apps.size == 1)

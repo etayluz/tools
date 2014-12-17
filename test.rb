@@ -10,8 +10,9 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://iktissadonline.com'
+	    url = 'http://fca-magazine.com/'
 		html_string = open(url){|f|f.read}
+		return
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		the_emails = html_string.scan(r).uniq
