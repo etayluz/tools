@@ -16,7 +16,8 @@ class ToolsController < ApplicationController
 	end
 
 	def getWebsites
-
+		puts EmailVerifier.check("inquires@itenantonline.com")
+		return
 		# func1
 		t0 = Apps.first
 		t1=Thread.new{func1()}
