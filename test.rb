@@ -9,22 +9,26 @@ require 'open-uri'
 
 class EtayClass
  	def self.test
-	    url = 'http://www.acemetrix.com'
+ 		emails = [];
+	    url = 'http://iktissadonline.com'
 		html_string = open(url){|f|f.read}
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
-		emails = html_string.scan(r).uniq
-		# puts emails[0]
+		the_emails = html_string.scan(r).uniq
+		# puts the_emails[0]
 		hrefs = []
+		emails.concat the_emails
+
 		if emails.size == 0
 			doc = Nokogiri::HTML(html_string)
 			hrefs = doc.css("a").map do |link|
 				href = link.attr("href")
 				if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
-					puts url
-					puts href
+					# puts url
+					# puts href
 					begin
 				 		URI.join( url, href ).to_s
+				 		
 				 	rescue
 				 		next
 				 	end
@@ -34,9 +38,9 @@ class EtayClass
 		end
 		hrefs.reject! {|href| !href.include? url}
 		# puts hrefs
-		emails = [];
 		hrefs.each do |the_url|
 			the_emails = self.load(the_url)
+			# puts the_url
 			if (!the_emails.nil?)
 				# puts the_emails
 				emails.concat the_emails
@@ -53,8 +57,9 @@ class EtayClass
 		html_string = open(url){|f|f.read}
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		emails = html_string.scan(r).uniq
+		# puts emails
 		if emails.size > 0
-			puts emails
+			# puts emails
 			return emails
 		end
 	end
