@@ -9,29 +9,43 @@ require 'open-uri'
 
 class EtayClass
  	def self.test
-	    url = 'http://www.asi67.com'
+	    url = 'http://www.acemetrix.com'
 		html_string = open(url){|f|f.read}
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		emails = html_string.scan(r).uniq
-		puts emails[0]
+		# puts emails[0]
 		hrefs = []
 		if emails.size == 0
 			doc = Nokogiri::HTML(html_string)
 			hrefs = doc.css("a").map do |link|
 				href = link.attr("href")
 				if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
-				  URI.join( url, href ).to_s
+					puts url
+					puts href
+					begin
+				 		URI.join( url, href ).to_s
+				 	rescue
+				 		next
+				 	end
 				end
 			end.compact.uniq
 			# STDOUT.puts(hrefs.join("\n"))
 		end
 		hrefs.reject! {|href| !href.include? url}
 		# puts hrefs
+		emails = [];
 		hrefs.each do |the_url|
-			self.load(the_url)
+			the_emails = self.load(the_url)
+			if (!the_emails.nil?)
+				# puts the_emails
+				emails.concat the_emails
+			end
 			# puts email_addresses
 		end
+		emails.uniq!
+		puts emails.join(', ')
+
 	end
 
   # A simple wrapper around the *nix cal command.
@@ -40,7 +54,8 @@ class EtayClass
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		emails = html_string.scan(r).uniq
 		if emails.size > 0
-			puts emails[0]
+			puts emails
+			return emails
 		end
 	end
 end
