@@ -35,7 +35,8 @@ class ToolsController < ApplicationController
 	def func1
 		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 		while apps.size == 1  do
-			puts Thread.current
+			# puts Thread.current
+			sleep 1
 			app = apps[0]
 			puts app.name
 			puts app.iTunes
