@@ -9,7 +9,7 @@ require 'open-uri'
 
 class EtayClass
  	def self.test
-	    url = 'http://app-roved.com'
+	    url = 'http://www.asi67.com'
 		html_string = open(url){|f|f.read}
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
@@ -20,15 +20,16 @@ class EtayClass
 			doc = Nokogiri::HTML(html_string)
 			hrefs = doc.css("a").map do |link|
 				href = link.attr("href")
-				if ((!href.include? "https://") && !href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
-				  url + '/' + href
+				if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
+				  URI.join( url, href ).to_s
 				end
 			end.compact.uniq
 			# STDOUT.puts(hrefs.join("\n"))
 		end
-		puts hrefs
-		hrefs.each do |url|
-			self.load(url)
+		hrefs.reject! {|href| !href.include? url}
+		# puts hrefs
+		hrefs.each do |the_url|
+			self.load(the_url)
 			# puts email_addresses
 		end
 	end
