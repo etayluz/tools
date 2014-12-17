@@ -16,9 +16,27 @@ class ToolsController < ApplicationController
 	end
 
 	def getWebsites
+
+		# func1
+		t0 = Apps.first
+		t1=Thread.new{func1()}
+		# t2=Thread.new{func1()}
+		# t3=Thread.new{func1()}
+		# t4=Thread.new{func1()}
+		# t5=Thread.new{func1()}
+		# t6=Thread.new{func1()}
+		# t1.join
+		# t2.join
+		# t3.join
+		# t4.join
+		# t5.join
+		# t6.join
+	end
+
+	def func1
 		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 		while apps.size == 1  do
-			# puts Thread.current
+			puts Thread.current
 			app = apps[0]
 			puts app.name
 			puts app.iTunes
@@ -42,46 +60,7 @@ class ToolsController < ApplicationController
 	 	 	end
 	 	 	app.save
 	 	 	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
-		end 
-
-		# t0 = Apps.first
-		# t1=Thread.new{func1()}
-		# t2=Thread.new{func1()}
-		# t3=Thread.new{func1()}
-		# t4=Thread.new{func1()}
-		# t5=Thread.new{func1()}
-		# t6=Thread.new{func1()}
-		# t1.join
-		# t2.join
-		# t3.join
-		# t4.join
-		# t5.join
-		# t6.join
-	end
-
-	def func1
-		puts Thread.current
-	  	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
-		while apps.size == 1  do
-			puts Thread.current
-			app = apps[0]
-			puts app.name
-			puts app.iTunes
-	 		doc = Nokogiri::HTML(open(app.iTunes, 'User-Agent' => 'firefox'))
-	 		array = doc.css('div.app-links a').map { |link| 
-				url = link['href'] 
-				url = Domainatrix.parse(url)
-				url.domain + "." + url.public_suffix
-	 	  	}
-	 	 	array.uniq!
-	 	 	if (array.size > 0)
-	 	 		app.website = array.join(', ')
-	 	 		puts app.website
-	 	 	else
-	 	 		app.website = "NONE"
-	 	 	end
-	 	 	app.save
-	 	 	apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+	 	 	# break;
 		end 
 	end
 
