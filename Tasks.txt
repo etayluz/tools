@@ -1,5 +1,5 @@
 * Thread the search for emails in website across webpages
 * Look at each website that returned NONE for email to see what's wrong - work with http://stcars.sg
-* When two websites available, make sure to go through both
+* When two websites available, make sure to go through both: 
 * Consider creating another table for websites and emails as there are duplicate websites
-* Ignore Facebook, Apple sites
+* Ignore Facebook.com, apple.com, blog.com, blogspot.com

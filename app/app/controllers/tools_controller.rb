@@ -1,3 +1,4 @@
+
 require 'nokogiri'
 require 'open-uri'
 require "csv"
@@ -34,18 +35,26 @@ class ToolsController < ApplicationController
 
 	def func1
 		apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+		failed = 0
 		while apps.size == 1  do
 			# puts Thread.current
-			sleep 1
+			# sleep 2 + 3* failed
+			puts failed
 			app = apps[0]
 			puts app.name
 			puts app.iTunes
 			begin
 	 			doc = Nokogiri::HTML(open(app.iTunes))
+	 			failed = failed - 1 if failed > 0
 	 		rescue
 	 			puts "CONNECTION ERROR - RETRY"
+	 			apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
+	 			# app.website = "RETRY"
+	 			# app.save
+	 			failed = failed + 1
 	 			next
 	 		end
+	 		# puts doc
 	 		array = doc.css('div.app-links a').map { |link| 
 				url = link['href'] 
 				url = Domainatrix.parse(url)

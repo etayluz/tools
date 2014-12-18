@@ -10,9 +10,8 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://fca-magazine.com/'
+	    url = 'http://wooviewapp.com'
 		html_string = open(url){|f|f.read}
-		return
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		the_emails = html_string.scan(r).uniq
@@ -41,7 +40,7 @@ class EtayClass
 		# puts hrefs
 		hrefs.each do |the_url|
 			the_emails = self.load(the_url)
-			# puts the_url
+			puts the_url
 			if (!the_emails.nil?)
 				# puts the_emails
 				emails.concat the_emails
@@ -55,7 +54,12 @@ class EtayClass
 
   # A simple wrapper around the *nix cal command.
   	def self.load(url)
-		html_string = open(url){|f|f.read}
+  		puts url
+		begin
+			html_string = open(url){|f|f.read}
+		rescue
+			html_string = ""
+		end
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		emails = html_string.scan(r).uniq
 		# puts emails
@@ -69,7 +73,11 @@ end
 # puts EtayClass.test
 EtayClass.test
 
-
+# url =  "https://itunes.apple.com/us/app/mobility/id686285904?mt=8"
+# html_string = open(url){|f|f.read}
+# puts html_string
+# doc = Nokogiri::HTML(html_string)
+# puts doc
 
 # puts hrefs
 

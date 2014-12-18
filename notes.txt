@@ -7,6 +7,7 @@ FETCH LINKS
 * Run fetch_apps.rb to generate a list of apps and their iTunes links
 * curl http://localhost:3000/loadApps to load apps into database
 * curl http://localhost:3000/getWebsites to scrape for app websites
+* Use proxy to avoid being blocked: http://www.freeproxies.org/ or http://www.us-proxy.org/ + MacProxy - download spotflux.com or cyberghost - free VPN
 
 RAILS APP
 * In root directory: rails new myapp --database=postgresql
