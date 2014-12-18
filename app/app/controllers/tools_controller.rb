@@ -51,6 +51,9 @@ class ToolsController < ApplicationController
 	 			apps = Apps.order("RANDOM()").where("apps.website IS NULL").take(1)
 	 			# app.website = "RETRY"
 	 			# app.save
+	 			if failed == 2
+	 				quit
+	 			end
 	 			failed = failed + 1
 	 			next
 	 		end
@@ -129,6 +132,7 @@ class ToolsController < ApplicationController
 			end
 			# puts email_addresses
 		end
+		emails.map!{|email| email.downcase.strip}
 		emails.uniq!
 		emails.reject! {|email| email.include? "example."}
 		emails.reject! {|email| email.include? "domain."}

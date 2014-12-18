@@ -10,7 +10,7 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://thenextup.com/'
+	    url = 'http://www.abmobileapps.com/'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
@@ -41,7 +41,7 @@ class EtayClass
 		end.compact.uniq
 		# STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
-		puts hrefs
+		# puts hrefs
 		hrefs.each do |the_url|
 			the_emails = self.load(the_url)
 			puts the_url
@@ -51,6 +51,7 @@ class EtayClass
 			end
 			# puts email_addresses
 		end
+		emails.map!{|email| email.downcase.strip}
 		emails.uniq!
 		puts emails.join(', ')
 
