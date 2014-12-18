@@ -134,6 +134,7 @@ class ToolsController < ApplicationController
 		end
 		emails.map!{|email| email.downcase.strip}
 		emails.uniq!
+		emails.reject! {|email| email.include? "company."}
 		emails.reject! {|email| email.include? "example."}
 		emails.reject! {|email| email.include? "domain."}
 		puts emails.join(', ')

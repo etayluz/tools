@@ -10,7 +10,7 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://www.abmobileapps.com/'
+	    url = 'http://wiziapp.com/'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
@@ -53,13 +53,16 @@ class EtayClass
 		end
 		emails.map!{|email| email.downcase.strip}
 		emails.uniq!
+		emails.reject! {|email| email.include? "company."}
+		emails.reject! {|email| email.include? "example."}
+		emails.reject! {|email| email.include? "domain."}
 		puts emails.join(', ')
 
 	end
 
   # A simple wrapper around the *nix cal command.
   	def self.load(url)
-  		puts url
+  		# puts url
 		begin
 			html_string = open(url){|f|f.read}
 		rescue
