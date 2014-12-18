@@ -10,8 +10,13 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://wooviewapp.com'
-		html_string = open(url){|f|f.read}
+	    url = 'http://thenextup.com/'
+	    begin
+			html_string = open(url){|f|f.read}
+		rescue
+			puts "ERROR"
+			return
+		end
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		the_emails = html_string.scan(r).uniq
@@ -19,25 +24,24 @@ class EtayClass
 		hrefs = []
 		emails.concat the_emails
 
-		if emails.size == 0
-			doc = Nokogiri::HTML(html_string)
-			hrefs = doc.css("a").map do |link|
-				href = link.attr("href")
-				if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
-					# puts url
-					# puts href
-					begin
-				 		URI.join( url, href ).to_s
-				 		
-				 	rescue
-				 		next
-				 	end
-				end
-			end.compact.uniq
-			# STDOUT.puts(hrefs.join("\n"))
-		end
+		doc = Nokogiri::HTML(html_string)
+		hrefs = doc.css("a").map do |link|
+			href = link.attr("href")
+			# puts href
+			if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
+				# puts url
+				# puts href
+				begin
+			 		URI.join( url, href ).to_s
+			 		
+			 	rescue
+			 		next
+			 	end
+			end
+		end.compact.uniq
+		# STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
-		# puts hrefs
+		puts hrefs
 		hrefs.each do |the_url|
 			the_emails = self.load(the_url)
 			puts the_url
