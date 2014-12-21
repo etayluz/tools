@@ -6,7 +6,32 @@ require 'uri'
 require 'domainatrix'
 
 class ToolsController < ApplicationController
-	$websiteName = ""
+
+	def migrateWebsites
+		apps = Apps.where("apps.website IS NOT NULL")
+		apps.each do |app|
+			if app.website.include? "NONE"
+				next
+			end
+			if app.website.include? ","
+				websites = app.website.split(', ')
+				puts websites[0]
+				puts websites[1]
+			else
+				puts app.website
+			end
+		end
+	end
+
+	def loadApps
+		CSV.foreach("../apps.csv", headers: true) do |row|
+			puts row[1]
+			record_to_insert = Hash["name" => row[0], "iTunes" => row[1]]
+			records_to_insert = []
+			records_to_insert << Apps.new(record_to_insert)
+			Apps.import(records_to_insert)
+		end
+	end
 
 	def loadApps
 		CSV.foreach("../apps.csv", headers: true) do |row|

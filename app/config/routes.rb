@@ -1,5 +1,6 @@
 App::Application.routes.draw do
 
+  get 'migrateWebsites' => 'tools#migrateWebsites'
   get 'run' => 'tools#run'
   get 'loadApps' => 'tools#loadApps'
   get 'getWebsites' => 'tools#getWebsites'
