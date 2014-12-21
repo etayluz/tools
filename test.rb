@@ -10,7 +10,7 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://wiziapp.com/'
+	    url = 'http://appinstitute.co.uk/'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue

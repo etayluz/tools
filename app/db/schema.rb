@@ -11,18 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141217210326) do
+ActiveRecord::Schema.define(version: 20141221194354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "apps", force: true do |t|
-    t.string   "name"
-    t.string   "iTunes"
-    t.string   "website"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "email"
+    t.string "name"
+    t.string "iTunes"
+    t.string "website"
+    t.string "email"
   end
 
 end

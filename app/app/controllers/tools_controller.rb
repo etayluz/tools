@@ -6,6 +6,8 @@ require 'uri'
 require 'domainatrix'
 
 class ToolsController < ApplicationController
+	$websiteName = ""
+
 	def loadApps
 		CSV.foreach("../apps.csv", headers: true) do |row|
 			puts row[1]
@@ -77,7 +79,8 @@ class ToolsController < ApplicationController
 	end
 
 	def getEmails
-		apps = Apps.order("RANDOM()").where("apps.email IS NULL AND apps.website iS NOT NULL").take(1)
+		# puts "the" + $websiteName
+		apps = Apps.order("RANDOM()").where("apps.email IS NULL AND apps.website != 'NONE' AND apps.website != ?",$websiteName).take(1)
 		app = apps[0]
 		puts app.website
 		website = app.website
@@ -85,6 +88,7 @@ class ToolsController < ApplicationController
 			websites = app.website.split(',')
 			website = websites[0]
 		end
+		$websiteName = website
 		emails = [];
 		# website = "aeronet.com"
 	    url = 'http://' + website
@@ -93,8 +97,8 @@ class ToolsController < ApplicationController
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
-			app.email = "NONE"
-			app.save
+			# app.email = "NONE"
+			# app.save
 			getEmails		
 		end
 		# puts html_string
@@ -141,10 +145,10 @@ class ToolsController < ApplicationController
 		if (emails.size > 0)
 			app.email = emails.join(', ')
 		else
-			app.email = "NONE"
+			# app.email = "NONE"
 			puts "No emails found"
 		end
-		app.save
+		# app.save
 		getEmails
 	end
 
