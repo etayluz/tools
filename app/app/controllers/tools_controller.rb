@@ -10,6 +10,7 @@ class ToolsController < ApplicationController
 	def migrateWebsites
 		apps = Apps.where("apps.website IS NOT NULL")
 		sites = []
+		hash = {}
 		apps.each do |app|
 			if app.website.include? "NONE"
 				next
@@ -17,15 +18,27 @@ class ToolsController < ApplicationController
 			if app.website.include? ","
 				websites = app.website.split(', ')
 				# puts websites[0]
-				sites << websites[0]
+				sites << websites[0].downcase
 				# puts websites[1]
-				sites << websites[1]
+				sites << websites[1].downcase
 			else
 				# puts app.website
-				sites << app.website
+				sites << app.website.downcase
 			end
 		end
-		puts sites
+		siteUnique = sites.uniq
+		siteUnique = siteUnique.sort_by(&:downcase)
+		siteUnique.each do |site|
+			# puts site
+			# puts sites.count(site)
+			# hash[site] = sites.count(site)
+			record_to_insert = Hash["website" => site, "apps" => sites.count(site)]
+			records_to_insert = []
+			records_to_insert << Websites.new(record_to_insert)
+			Websites.import(records_to_insert)
+		end
+		# puts hash
+		# puts siteUnique
 	end
 
 	def loadApps

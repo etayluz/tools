@@ -10,7 +10,7 @@ require 'open-uri'
 class EtayClass
  	def self.test
  		emails = [];
-	    url = 'http://appinstitute.co.uk/'
+	    url = 'http://jewsonsitehut.co.uk'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
@@ -32,7 +32,7 @@ class EtayClass
 				# puts url
 				# puts href
 				begin
-			 		URI.join( url, href ).to_s
+			 		URI.join( url, href ).to_s.downcase
 			 		
 			 	rescue
 			 		next
@@ -42,29 +42,49 @@ class EtayClass
 		# STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
 		# puts hrefs
-		hrefs.each do |the_url|
-			the_emails = self.load(the_url)
-			puts the_url
-			if (!the_emails.nil?)
-				# puts the_emails
-				emails.concat the_emails
+		hrefs.uniq!
+		# t0 = self.first
+		threads = (1..hrefs.size).map do |i|
+			puts i
+  			Thread.new do 
+  				
+				self.load(hrefs[i])  		
 			end
-			# puts email_addresses
 		end
-		emails.map!{|email| email.downcase.strip}
-		emails.uniq!
-		emails.reject! {|email| email.include? "company."}
-		emails.reject! {|email| email.include? "example."}
-		emails.reject! {|email| email.include? "domain."}
-		puts emails.join(', ')
+		threads.each {|t| t.join}
+
+		# hrefs.each do |the_url|
+		# 	# puts the_url
+		# 	t1=Thread.new{self.load(the_url)}
+		# 	puts "now"
+		# 	t1.join
+		# 	# Thread.new do
+   #    			# yield
+   #    			# self.load(the_url)
+   #  		end
+			# the_emails = self.load(the_url)
+			# puts the_url
+			# if (!the_emails.nil?)
+			# 	# puts the_emails
+			# 	emails.concat the_emails
+			# end
+			# puts email_addresses
+		# end
+		# emails.map!{|email| email.downcase.strip}
+		# emails.uniq!
+		# emails.reject! {|email| email.include? "company."}
+		# emails.reject! {|email| email.include? "example."}
+		# emails.reject! {|email| email.include? "domain."}
+		# puts emails.join(', ')
 
 	end
 
   # A simple wrapper around the *nix cal command.
   	def self.load(url)
-  		# puts url
+  		# puts
 		begin
 			html_string = open(url){|f|f.read}
+			puts url
 		rescue
 			html_string = ""
 		end
@@ -72,8 +92,8 @@ class EtayClass
 		emails = html_string.scan(r).uniq
 		# puts emails
 		if emails.size > 0
-			# puts emails
-			return emails
+			puts emails
+			# return emails
 		end
 	end
 end
