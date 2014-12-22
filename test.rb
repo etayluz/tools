@@ -90,6 +90,10 @@ class EtayClass
 		end
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		emails = html_string.scan(r).uniq
+		emails.map!{|c| c.downcase.strip}
+		emails.reject! {|email| email.include? "company."}
+		emails.reject! {|email| email.include? "example."}
+		emails.reject! {|email| email.include? "domain."}
 		# puts emails
 		if emails.size > 0
 			puts emails
