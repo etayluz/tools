@@ -9,18 +9,23 @@ class ToolsController < ApplicationController
 
 	def migrateWebsites
 		apps = Apps.where("apps.website IS NOT NULL")
+		sites = []
 		apps.each do |app|
 			if app.website.include? "NONE"
 				next
 			end
 			if app.website.include? ","
 				websites = app.website.split(', ')
-				puts websites[0]
-				puts websites[1]
+				# puts websites[0]
+				sites << websites[0]
+				# puts websites[1]
+				sites << websites[1]
 			else
-				puts app.website
+				# puts app.website
+				sites << app.website
 			end
 		end
+		puts sites
 	end
 
 	def loadApps
