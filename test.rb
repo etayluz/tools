@@ -12,7 +12,7 @@ class EtayClass
 	@@emails = []
  	def self.test
  		emails = [];
-	    url = 'http://jewsonsitehut.co.uk'
+	    url = 'http://sycorp.ca'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
@@ -106,7 +106,11 @@ class EtayClass
   		puts @@threads
 
   		if (@@threads == 0)
-  			puts @@emails
+  			if (@@emails.size > 0)
+  				puts @@emails
+  			else
+  				puts "NO EMAILS FOUND"
+  			end
   		end
 	end
 end
