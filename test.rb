@@ -8,6 +8,8 @@ require 'open-uri'
 # array = doc.css('div.app-links a').map { |link| 
 
 class EtayClass
+	@@threads = 0
+	@@emails = []
  	def self.test
  		emails = [];
 	    url = 'http://jewsonsitehut.co.uk'
@@ -44,8 +46,9 @@ class EtayClass
 		# puts hrefs
 		hrefs.uniq!
 		# t0 = self.first
+		@@threads = hrefs.size
 		threads = (1..hrefs.size).map do |i|
-			puts i
+			# puts i
   			Thread.new do 
   				
 				self.load(hrefs[i])  		
@@ -81,7 +84,6 @@ class EtayClass
 
   # A simple wrapper around the *nix cal command.
   	def self.load(url)
-  		# puts
 		begin
 			html_string = open(url){|f|f.read}
 			puts url
@@ -96,9 +98,16 @@ class EtayClass
 		emails.reject! {|email| email.include? "domain."}
 		# puts emails
 		if emails.size > 0
-			puts emails
+			@@emails.concat emails
+			# puts emails
 			# return emails
 		end
+		@@threads = @@threads - 1
+  		puts @@threads
+
+  		if (@@threads == 0)
+  			puts @@emails
+  		end
 	end
 end
 
