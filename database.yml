@@ -1,0 +1,5 @@
+adapter: postgresql
+database:  apps_development
+username: admin
+password: password5!
+host:      localhost
