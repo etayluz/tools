@@ -6,10 +6,6 @@ require 'domainatrix'
 require 'open-uri'
 require 'active_record'
 
-# doc = Nokogiri::HTML(open("http://itenantonline.com"))
-# array = doc.css('div.app-links a').map { |link| 
-
-
 
 class EtayClass < ActiveRecord::Base
 	@@threads = {}
@@ -131,30 +127,6 @@ class EtayClass < ActiveRecord::Base
 end
 
 
-# puts EtayClass.test
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
-# puts s
 EtayClass.getEmails
-
-# url =  "https://itunes.apple.com/us/app/mobility/id686285904?mt=8"
-# html_string = open(url){|f|f.read}
-# puts html_string
-# doc = Nokogiri::HTML(html_string)
-# puts doc
-
-# puts hrefs
-
-# puts 
-
-# 	url = link['href'] 
-	#   url = "http://#{url}" if URI.parse(url).scheme.nil?
-  # host = URI.parse(url).host.downcase
-  # url = host.start_with?('www.') ? host[4..-1] : host
-# url = Domainatrix.parse(url)
-# url.domain + "." + url.public_suffix
-
-
-# }
-# array.uniq!
-# puts array.join(', ')
