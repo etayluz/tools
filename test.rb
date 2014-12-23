@@ -16,7 +16,7 @@ class EtayClass < ActiveRecord::Base
 	@@emails = {}
 
  	def self.test 
-	    url = 'http://www.jewson.co.uk/'
+	    url = 'http://www.etayluz.com'
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>1000){|f|f.read}
 		rescue
@@ -25,12 +25,7 @@ class EtayClass < ActiveRecord::Base
 		end
 		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		foundEmails = html_string.scan(emailRejex).uniq
-		if (foundEmails.size > 0)
-			if  @@emails[url].nil?
-				@@emails[url] = []
-			end
-			@@emails[url].concat foundEmails
-		end
+		self.storeEmail(url, foundEmails)
 		doc = Nokogiri::HTML(html_string)
 		hrefs = []
 		hrefs = doc.css("a").map do |link|
@@ -55,7 +50,7 @@ class EtayClass < ActiveRecord::Base
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
 		@@threads[url] = hrefs.size
-		puts @@threads 
+		# puts @@threads 
 		# puts hrefs
 		threads = (0..(hrefs.size-1)).map do |i|
   			Thread.new do 
@@ -81,19 +76,10 @@ class EtayClass < ActiveRecord::Base
 		# self.test		
 	end
   # A simple wrapper around the *nix cal command.
-  	def self.loadURL(url)
-		begin
-			html_string = open(url){|f|f.read}
-			# puts "A1"
-			puts url
-		rescue
-			puts url
-			puts "failed"
-			html_string = ""
-		end
-		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
-		emails = html_string.scan(r)
-		emails.map!{|c| c.downcase.strip}
+
+  	def self.storeEmail(url, emails)
+  		# puts url
+  		emails.map!{|c| c.downcase.strip}
 		emails.uniq!
 		emails.reject! {|email| email.include? "company."}
 		emails.reject! {|email| email.include? "example."}
@@ -106,13 +92,32 @@ class EtayClass < ActiveRecord::Base
 				@@emails[url] = []
 			end
 			@@emails[url].concat emails
-			# puts emails
+			@@emails[url].uniq!
+			if (@@threads[url] == 0)
+				puts @@emails
+			end
 			# return emails
 		end
+  	end
 
-		@@threads[url] = @@threads[url] - 1
-  		puts @@threads
-
+  	def self.loadURL(url)
+		begin
+			html_string = open(url){|f|f.read}
+			# puts "A1"
+			puts @@threads
+			puts url
+		rescue
+			puts url
+			puts @@threads
+			puts "failed"
+			html_string = ""
+		end
+		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
+		emails = html_string.scan(r)
+		url = Domainatrix.parse(url)
+		url = url.domain + "." + url.public_suffix
+		@@threads[url] = (@@threads[url] - 1)
+		self.storeEmail(url, emails)
   		if (@@threads[url] == 0)
   			if (@@emails.size > 0)
   				self.getNextWebsite(url)
