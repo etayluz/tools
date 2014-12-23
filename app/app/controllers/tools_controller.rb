@@ -6,7 +6,10 @@ require 'uri'
 require 'domainatrix'
 
 class ToolsController < ApplicationController
-
+	@@threads = 0
+	@@websitesNum = 0
+	@@firstTime = true
+	@@emails = []
 	def migrateWebsites
 		apps = Apps.where("apps.website IS NOT NULL")
 		sites = []
@@ -122,28 +125,27 @@ class ToolsController < ApplicationController
 	end
 
 	def getEmails
-		# puts "the" + $websiteName
-		apps = Apps.order("RANDOM()").where("apps.email IS NULL AND apps.website != 'NONE' AND apps.website != ?",$websiteName).take(1)
-		app = apps[0]
-		puts app.website
-		website = app.website
-		if app.website.include? ","
-			websites = app.website.split(',')
-			website = websites[0]
+		if (@@firstTime)
+			@@firstTime = false
+			t0 = Apps.first
 		end
-		$websiteName = website
-		emails = [];
-		# website = "aeronet.com"
-	    url = 'http://' + website
+		websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
+		website = websites[0]
+
+ 		emails = [];
+	    url = 'http://' + website.website
 	    puts url
-	    # url = 'http://fca-magazine.com'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
-			# app.email = "NONE"
-			# app.save
-			getEmails		
+			puts "ERROR"
+			self.getEmails()
+			return
 		end
+		# if (@@threads < 5)
+  # 			t1=Thread.new{self.getEmails()}
+  # 			t1.join
+  # 		end
 		# puts html_string
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		the_emails = html_string.scan(r).uniq
@@ -151,64 +153,80 @@ class ToolsController < ApplicationController
 		hrefs = []
 		emails.concat the_emails
 
-		if emails.size == 0
-			doc = Nokogiri::HTML(html_string)
-			hrefs = doc.css("a").map do |link|
-				href = link.attr("href")
-				if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
-					# puts url
-					# puts href
-					begin
-				 		URI.join( url, href ).to_s
-				 		
-				 	rescue
-				 		next
-				 	end
-				end
-			end.compact.uniq
-			# STDOUT.puts(hrefs.join("\n"))
-		end
+		doc = Nokogiri::HTML(html_string)
+		hrefs = doc.css("a").map do |link|
+			href = link.attr("href")
+			# puts href
+			if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
+				# puts url
+				# puts href
+				begin
+			 		URI.join( url, href ).to_s.downcase
+			 		
+			 	rescue
+			 		next
+			 	end
+			end
+		end.compact.uniq
+		# STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
 		# puts hrefs
-		hrefs.each do |the_url|
-			the_emails = self.loadURL(the_url)
-			# puts the_url
-			if (!the_emails.nil?)
-				# puts the_emails
-				emails.concat the_emails
+		hrefs.uniq!
+		# t0 = self.first
+		if (hrefs.size == 0)
+ 			if (@@emails.size > 0)
+  				puts @@emails.join(', ')
+  				@@emails = []
+  			else
+  				puts "NO EMAILS FOUND"
+  			end
+  			self.getEmails()
+  			return
+		end
+		@@threads = hrefs.size
+		threads = (1..hrefs.size).map do |i|
+			# puts i
+  			Thread.new do 
+				self.loadURL(hrefs[i])  		
 			end
-			# puts email_addresses
 		end
-		emails.map!{|email| email.downcase.strip}
-		emails.uniq!
-		emails.reject! {|email| email.include? "company."}
-		emails.reject! {|email| email.include? "example."}
-		emails.reject! {|email| email.include? "domain."}
-		puts emails.join(', ')
-		if (emails.size > 0)
-			app.email = emails.join(', ')
-		else
-			# app.email = "NONE"
-			puts "No emails found"
-		end
-		# app.save
-		getEmails
+		threads.each {|t| t.join}
 	end
 
 	def loadURL(url)
-		puts url
 		begin
 			html_string = open(url){|f|f.read}
+			puts url
 		rescue
 			html_string = ""
 		end
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
 		emails = html_string.scan(r).uniq
+		emails.map!{|c| c.downcase.strip}
+		emails.reject! {|email| email.include? "company."}
+		emails.reject! {|email| email.include? "example."}
+		emails.reject! {|email| email.include? "domain."}
+		emails.uniq!
 		# puts emails
 		if emails.size > 0
+			@@emails.concat emails
+			@@emails.uniq!
 			# puts emails
-			return emails
+			# return emails
 		end
+		@@threads = @@threads - 1
+  		puts @@threads
+
+
+  		if (@@threads == 0)
+  			if (@@emails.size > 0)
+  				puts @@emails.join(', ')
+  				@@emails = []
+  			else
+  				puts "NO EMAILS FOUND"
+  			end
+  			self.getEmails()
+  		end
 	end
 
 	def run
