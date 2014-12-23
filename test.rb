@@ -15,7 +15,7 @@ class EtayClass < ActiveRecord::Base
 	@@threads = {}
 	@@emails = {}
 
- 	def self.test 
+ 	def self.getEmails 
 	    url = 'http://www.jewsonsitehut.co.uk'
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
@@ -135,7 +135,7 @@ end
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
 # puts s
-EtayClass.test
+EtayClass.getEmails
 
 # url =  "https://itunes.apple.com/us/app/mobility/id686285904?mt=8"
 # html_string = open(url){|f|f.read}
