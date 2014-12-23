@@ -9,9 +9,9 @@ require 'open-uri'
 
 class EtayClass
 	@@threads = {}
-	@@emails = []
+	@@emails = {}
  	def self.test
- 		emails = [];
+ 		# emails = [];
 	    url = 'http://nomalys.com'
 	    begin
 			html_string = open(url){|f|f.read}
@@ -24,8 +24,13 @@ class EtayClass
 		the_emails = html_string.scan(r).uniq
 		# puts the_emails[0]
 		hrefs = []
-		emails.concat the_emails
-
+		# emails.concat the_emails
+		if (the_emails.size > 0)
+			if  @@emails[url].nil?
+				@@emails[url] = []
+			end
+			@@emails[url].concat emails
+		end
 		doc = Nokogiri::HTML(html_string)
 		hrefs = doc.css("a").map do |link|
 			href = link.attr("href")
@@ -83,13 +88,17 @@ class EtayClass
 		emails.reject! {|email| email.include? "example."}
 		emails.reject! {|email| email.include? "domain."}
 		# puts emails
+		url = Domainatrix.parse(url)
+		url = url.domain + "." + url.public_suffix
 		if emails.size > 0
-			@@emails.concat emails
+			if  @@emails[url].nil?
+				@@emails[url] = []
+			end
+			@@emails[url].concat emails
 			# puts emails
 			# return emails
 		end
-		url = Domainatrix.parse(url)
-		url = url.domain + "." + url.public_suffix
+
 		@@threads[url] = @@threads[url] - 1
   		puts @@threads
 
