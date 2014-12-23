@@ -41,22 +41,22 @@ class EtayClass
 			 	end
 			end
 		end.compact.uniq
-		STDOUT.puts(hrefs.join("\n"))
+		# STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
 		# puts hrefs
 		hrefs.uniq!
 		# t0 = self.first
 		@@threads = hrefs.size
-		puts "hrefs"
+		# puts "hrefs"
 		puts @@threads 
-		puts hrefs
+		# puts hrefs
 		threads = (0..(hrefs.size-1)).map do |i|
 			# puts i
   			Thread.new do 
 				self.loadURL(hrefs[i])  		
 			end
 		end
-		puts "end"
+		# puts "end"
 		threads.each {|t| t.join}
 
 	end
