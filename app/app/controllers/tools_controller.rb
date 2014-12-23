@@ -218,8 +218,8 @@ class ToolsController < ApplicationController
 			# puts emails
 			# return emails
 		end
-		@lock = Mutex.new
-		@lock.synchronize do
+		# @lock = Mutex.new
+		# @lock.synchronize do
 
 			@@threads = @@threads - 1
 	  		puts @@threads
@@ -235,7 +235,7 @@ class ToolsController < ApplicationController
 	  			# ActiveRecord::Base.connection.close
 	  			self.getEmails()
 	  		end
-  		end
+  		# end
 	end
 
 	def run
