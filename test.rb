@@ -12,7 +12,7 @@ class EtayClass
 	@@emails = []
  	def self.test
  		emails = [];
-	    url = 'http://virtualconciergeapp.com/'
+	    url = 'http://nomalys.com'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
@@ -41,13 +41,15 @@ class EtayClass
 			 	end
 			end
 		end.compact.uniq
-		# STDOUT.puts(hrefs.join("\n"))
+		STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
 		# puts hrefs
 		hrefs.uniq!
 		# t0 = self.first
 		@@threads = hrefs.size
-		threads = (1..hrefs.size).map do |i|
+		puts "hrefs"
+		puts hrefs
+		threads = (0..(hrefs.size-0)).map do |i|
 			# puts i
   			Thread.new do 
 				self.loadURL(hrefs[i])  		
@@ -66,8 +68,9 @@ class EtayClass
 			html_string = ""
 		end
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
-		emails = html_string.scan(r).uniq
+		emails = html_string.scan(r)
 		emails.map!{|c| c.downcase.strip}
+		emails.uniq!
 		emails.reject! {|email| email.include? "company."}
 		emails.reject! {|email| email.include? "example."}
 		emails.reject! {|email| email.include? "domain."}
