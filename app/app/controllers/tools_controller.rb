@@ -188,7 +188,7 @@ class ToolsController < ApplicationController
   			return
 		end
 		@@threads = hrefs.size
-		threads = (1..hrefs.size).map do |i|
+		threads = (0..(hrefs.size-1)).map do |i|
 			# puts i
   			Thread.new do 
 				self.loadURL(hrefs[i])  		

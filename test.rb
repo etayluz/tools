@@ -48,13 +48,15 @@ class EtayClass
 		# t0 = self.first
 		@@threads = hrefs.size
 		puts "hrefs"
+		puts @@threads 
 		puts hrefs
-		threads = (0..(hrefs.size-0)).map do |i|
+		threads = (0..(hrefs.size-1)).map do |i|
 			# puts i
   			Thread.new do 
 				self.loadURL(hrefs[i])  		
 			end
 		end
+		puts "end"
 		threads.each {|t| t.join}
 
 	end
@@ -63,8 +65,11 @@ class EtayClass
   	def self.loadURL(url)
 		begin
 			html_string = open(url){|f|f.read}
+			# puts "A1"
 			puts url
 		rescue
+			puts url
+			puts "failed"
 			html_string = ""
 		end
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
