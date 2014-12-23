@@ -16,9 +16,9 @@ class EtayClass < ActiveRecord::Base
 	@@emails = {}
 
  	def self.test 
-	    url = 'http://www.etayluz.com'
+	    url = 'http://www.jewsonsitehut.co.uk'
 	    begin
-			html_string = open(url, 'r',  :read_timeout=>1000){|f|f.read}
+			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 		rescue
 			self.getNextWebsite("COULD NOT OPEN URL") 
 			return
@@ -88,6 +88,7 @@ class EtayClass < ActiveRecord::Base
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
 		if emails.size > 0
+			puts emails
 			if  @@emails[url].nil?
 				@@emails[url] = []
 			end
