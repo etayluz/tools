@@ -125,11 +125,14 @@ class ToolsController < ApplicationController
 	end
 
 	def getEmails
+		@@threads = 0
 		if (@@firstTime)
 			@@firstTime = false
 			t0 = Apps.first
 		end
+		puts "before"
 		websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
+		puts "after"
 		website = websites[0]
 
  		emails = [];
@@ -180,6 +183,7 @@ class ToolsController < ApplicationController
   			else
   				puts "NO EMAILS FOUND"
   			end
+  			# ActiveRecord::Base.connection.close
   			self.getEmails()
   			return
 		end
@@ -214,18 +218,23 @@ class ToolsController < ApplicationController
 			# puts emails
 			# return emails
 		end
-		@@threads = @@threads - 1
-  		puts @@threads
+		@lock = Mutex.new
+		@lock.synchronize do
+
+			@@threads = @@threads - 1
+	  		puts @@threads
 
 
-  		if (@@threads == 0)
-  			if (@@emails.size > 0)
-  				puts @@emails.join(', ')
-  				@@emails = []
-  			else
-  				puts "NO EMAILS FOUND"
-  			end
-  			self.getEmails()
+	  		if (@@threads == 0)
+	  			if (@@emails.size > 0)
+	  				puts @@emails.join(', ')
+	  				@@emails = []
+	  			else
+	  				puts "NO EMAILS FOUND"
+	  			end
+	  			# ActiveRecord::Base.connection.close
+	  			self.getEmails()
+	  		end
   		end
 	end
 
