@@ -4,71 +4,82 @@ require "csv"
 require 'uri'
 require 'domainatrix'
 require 'open-uri'
+require 'active_record'
+
 # doc = Nokogiri::HTML(open("http://itenantonline.com"))
 # array = doc.css('div.app-links a').map { |link| 
 
-class EtayClass
+
+
+class EtayClass < ActiveRecord::Base
 	@@threads = {}
 	@@emails = {}
- 	def self.test
- 		# emails = [];
-	    url = 'http://jewsonsitehut.co.uk'
+
+ 	def self.test 
+	    url = 'http://www.jewson.co.uk/'
 	    begin
-			html_string = open(url){|f|f.read}
+			html_string = open(url, 'r',  :read_timeout=>1000){|f|f.read}
 		rescue
-			puts "ERROR"
+			self.getNextWebsite("COULD NOT OPEN URL") 
 			return
 		end
-		# puts html_string
-		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
-		the_emails = html_string.scan(r).uniq
-		# puts the_emails[0]
-		hrefs = []
-		# emails.concat the_emails
-		if (the_emails.size > 0)
+		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
+		foundEmails = html_string.scan(emailRejex).uniq
+		if (foundEmails.size > 0)
 			if  @@emails[url].nil?
 				@@emails[url] = []
 			end
-			@@emails[url].concat emails
+			@@emails[url].concat foundEmails
 		end
 		doc = Nokogiri::HTML(html_string)
+		hrefs = []
 		hrefs = doc.css("a").map do |link|
 			href = link.attr("href")
 			# puts href
 			if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
-				# puts url
-				# puts href
 				begin
 			 		URI.join( url, href ).to_s.downcase
-			 		
 			 	rescue
 			 		next
 			 	end
 			end
 		end.compact.uniq
-		# STDOUT.puts(hrefs.join("\n"))
 		hrefs.reject! {|href| !href.include? url}
-		# puts hrefs
 		hrefs.uniq!
+		# puts hrefs
 		# t0 = self.first
-		# @@threads = hrefs.size
+		if (hrefs.size == 0)
+			self.getNextWebsite(url)
+			return
+		end
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
 		@@threads[url] = hrefs.size
-		# puts "hrefs"
 		puts @@threads 
 		# puts hrefs
 		threads = (0..(hrefs.size-1)).map do |i|
-			# puts i
   			Thread.new do 
 				self.loadURL(hrefs[i])  		
 			end
 		end
-		# puts "end"
 		threads.each {|t| t.join}
 
 	end
 
+	def self.getNextWebsite(msg)
+		if (msg.include? ".")
+			# url = msg
+			if (@@emails.size > 0)
+				puts @@emails
+			else
+				puts "No Emails found"
+			end
+
+		else
+			puts msg
+		end
+		# self.test		
+	end
   # A simple wrapper around the *nix cal command.
   	def self.loadURL(url)
 		begin
@@ -104,15 +115,20 @@ class EtayClass
 
   		if (@@threads[url] == 0)
   			if (@@emails.size > 0)
-  				puts @@emails
+  				self.getNextWebsite(url)
   			else
-  				puts "NO EMAILS FOUND"
+  				self.getNextWebsite("NO EMAILS FOUND")
   			end
+
   		end
 	end
 end
 
+
 # puts EtayClass.test
+dbconfig = YAML::load(File.open('database.yml'))
+ActiveRecord::Base.establish_connection(dbconfig)
+# puts s
 EtayClass.test
 
 # url =  "https://itunes.apple.com/us/app/mobility/id686285904?mt=8"
