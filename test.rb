@@ -12,7 +12,7 @@ class EtayClass
 	@@emails = {}
  	def self.test
  		# emails = [];
-	    url = 'http://nomalys.com'
+	    url = 'http://jewsonsitehut.co.uk'
 	    begin
 			html_string = open(url){|f|f.read}
 		rescue
