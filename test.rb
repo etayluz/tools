@@ -8,7 +8,7 @@ require 'open-uri'
 # array = doc.css('div.app-links a').map { |link| 
 
 class EtayClass
-	@@threads = 0
+	@@threads = {}
 	@@emails = []
  	def self.test
  		emails = [];
@@ -46,7 +46,10 @@ class EtayClass
 		# puts hrefs
 		hrefs.uniq!
 		# t0 = self.first
-		@@threads = hrefs.size
+		# @@threads = hrefs.size
+		url = Domainatrix.parse(url)
+		url = url.domain + "." + url.public_suffix
+		@@threads[url] = hrefs.size
 		# puts "hrefs"
 		puts @@threads 
 		# puts hrefs
@@ -85,10 +88,12 @@ class EtayClass
 			# puts emails
 			# return emails
 		end
-		@@threads = @@threads - 1
+		url = Domainatrix.parse(url)
+		url = url.domain + "." + url.public_suffix
+		@@threads[url] = @@threads[url] - 1
   		puts @@threads
 
-  		if (@@threads == 0)
+  		if (@@threads[url] == 0)
   			if (@@emails.size > 0)
   				puts @@emails
   			else
