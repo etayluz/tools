@@ -10,16 +10,16 @@ require 'active_record'
 class EtayClass
 	@threads = 0
 	@emails = []
-	@website = ""
+	@website
 
  	def getEmails(website)
- 		@website = website.website
+ 		@website = website
  		@emails = []
  		@threads = 0
 		puts "Start: " + website.website
 		url = 'http://' + website.website
-	   	# url = 'http://modulo.com' - fix this
-		# url = 'http://maciproject.com'
+	   	# url = 'http://modulo.com' - fix this - not all threads are returning
+		# url = 'http://immergas.com' #- emails too long
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 		rescue
@@ -117,9 +117,13 @@ class EtayClass
 		if (msg.include? ".")
 			# url = msg
 			if (@emails.size > 0)
-				puts @website + ": " + @emails.join(', ')
+				puts @website.website + ": " + @emails.join(', ')
+				@website.email = @emails.join(', ')
+				@website.save
 			else
 				puts "No Emails found"
+				@website.email = "zzzzz"
+				@website.save
 			end
 
 		else
