@@ -12,13 +12,15 @@ class EtayClass < ActiveRecord::Base
 	@@emails = {}
 
  	def self.getEmails 
- 		puts Websites.count
+	    websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
+		website = websites[0]
+	    url = 'http://' + website.website
+	   	url = 'http://moralessigns.com'
 
-	    url = 'http://www.jewsonsitehut.co.uk'
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 		rescue
-			self.getNextWebsite("COULD NOT OPEN URL") 
+			self.getNextWebsite("COULD NOT OPEN URL: " + url) 
 			return
 		end
 		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
@@ -29,7 +31,7 @@ class EtayClass < ActiveRecord::Base
 		hrefs = doc.css("a").map do |link|
 			href = link.attr("href")
 			# puts href
-			if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#"))
+			if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#") && (!href.downcase.include? ".jpg"))
 				begin
 			 		URI.join( url, href ).to_s.downcase
 			 	rescue
@@ -86,15 +88,15 @@ class EtayClass < ActiveRecord::Base
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
 		if emails.size > 0
-			puts emails
+			# puts emails
 			if  @@emails[url].nil?
 				@@emails[url] = []
 			end
 			@@emails[url].concat emails
 			@@emails[url].uniq!
-			if (@@threads[url] == 0)
-				puts @@emails
-			end
+			# if (@@threads[url] == 0)
+			# 	puts @@emails
+			# end
 			# return emails
 		end
   	end
@@ -108,7 +110,7 @@ class EtayClass < ActiveRecord::Base
 		rescue
 			puts url
 			puts @@threads
-			puts "failed"
+			puts "COULD NOT OPEN URL: " + url
 			html_string = ""
 		end
 		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
