@@ -12,6 +12,8 @@ class EtayClass < ActiveRecord::Base
 	@@emails = {}
 
  	def self.getEmails 
+ 		puts Websites.count
+
 	    url = 'http://www.jewsonsitehut.co.uk'
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
@@ -126,6 +128,8 @@ class EtayClass < ActiveRecord::Base
 	end
 end
 
+class Websites < ActiveRecord::Base
+end
 
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
