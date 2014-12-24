@@ -144,6 +144,9 @@ class EtayClass
 		emails.reject! {|email| email.include? "domain."}
 		emails.reject! {|email| email.include? ".gif"}
 		emails.reject! {|email| email.include? ".jpg"}
+		emails.reject! {|email| email.include? ".png"}
+		emails.reject! {|email| email.include? ".js"}
+
 		# puts emails
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
