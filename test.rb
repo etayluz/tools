@@ -14,8 +14,9 @@ class EtayClass < ActiveRecord::Base
  	def self.getEmails 
 	    websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
 		website = websites[0]
+		puts "Start: " + website.website
 	    url = 'http://' + website.website
-	   	# url = 'http://moralessigns.com'
+	   	url = 'http://38cn.com.cn'
 
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
@@ -113,8 +114,12 @@ class EtayClass < ActiveRecord::Base
 			puts "COULD NOT OPEN URL: " + url
 			html_string = ""
 		end
-		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
-		emails = html_string.scan(r)
+		r = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)  
+		begin   
+			emails = html_string.scan(r)
+		rescue
+			emails = []
+		end
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
 		@@threads[url] = (@@threads[url] - 1)
