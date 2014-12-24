@@ -44,7 +44,14 @@ class EtayClass
 			foundEmails = []
 		end
 		storeEmail(url, foundEmails)
-		doc = Nokogiri::HTML(html_string)
+
+		begin
+			doc = Nokogiri::HTML(html_string)
+		rescue
+			puts "COULD NOT PARSE HTML: " + url
+			getNextWebsite
+			return
+		end
 		hrefs = []
 		hrefs = doc.css("a").map do |link|
 			href = link.attr("href")
