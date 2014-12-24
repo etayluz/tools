@@ -65,7 +65,7 @@ class EtayClass < ActiveRecord::Base
 
 	def self.loadURL(url)
 		begin
-			html_string = open(url){|f|f.read}
+			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 			# puts "A1"
 			puts @threads
 			puts url
@@ -132,7 +132,7 @@ class EtayClass < ActiveRecord::Base
 		emails.reject! {|email| email.include? "company."}
 		emails.reject! {|email| email.include? "example."}
 		emails.reject! {|email| email.include? "domain."}
-		emails.reject! {|email| email.include? "2x.gif"}
+		emails.reject! {|email| email.include? ".gif"}
 		# puts emails
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
