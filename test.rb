@@ -15,7 +15,7 @@ class EtayClass < ActiveRecord::Base
 	    websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
 		website = websites[0]
 	    url = 'http://' + website.website
-	   	url = 'http://moralessigns.com'
+	   	# url = 'http://moralessigns.com'
 
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
