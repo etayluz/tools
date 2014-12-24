@@ -7,13 +7,15 @@ require 'open-uri'
 require 'active_record'
 
 
-class EtayClass < ActiveRecord::Base
+class EtayClass
 	@threads = 0
 	@emails = []
 	@website = ""
 
- 	def self.getEmails(website)
+ 	def getEmails(website)
  		@website = website.website
+ 		@emails = []
+ 		@threads = 0
 		puts "Start: " + website.website
 		url = 'http://' + website.website
 	   	# url = 'http://modulo.com' - fix this
@@ -21,7 +23,7 @@ class EtayClass < ActiveRecord::Base
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 		rescue
-			self.getNextWebsite("COULD NOT OPEN URL: " + url) 
+			getNextWebsite("COULD NOT OPEN URL: " + url) 
 			return
 		end
 		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)   
@@ -30,7 +32,7 @@ class EtayClass < ActiveRecord::Base
 		rescue
 			foundEmails = []
 		end
-		self.storeEmail(url, foundEmails)
+		storeEmail(url, foundEmails)
 		doc = Nokogiri::HTML(html_string)
 		hrefs = []
 		hrefs = doc.css("a").map do |link|
@@ -50,7 +52,7 @@ class EtayClass < ActiveRecord::Base
 		# puts hrefs
 		# t0 = self.first
 		if (hrefs.size == 0)
-			self.getNextWebsite(url)
+			getNextWebsite(url)
 			return
 		end
 		url = Domainatrix.parse(url)
@@ -60,14 +62,14 @@ class EtayClass < ActiveRecord::Base
 		# puts hrefs
 		threads = (0..(hrefs.size-1)).map do |i|
   			Thread.new do 
-				self.loadURL(hrefs[i])  		
+				loadURL(hrefs[i])  		
 			end
 		end
 		threads.each {|t| t.join}
 
 	end
 
-	def self.loadURL(url)
+	def loadURL(url)
 		begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 			# puts "A1"
@@ -98,12 +100,12 @@ class EtayClass < ActiveRecord::Base
 		# end
 		# remainingThreads = @threads - 1
 		@threads = @threads - 1
-		self.storeEmail(url, emails)
+		storeEmail(url, emails)
   		if (@threads == 0)
   			if (@emails.size > 0)
-  				self.getNextWebsite(url)
+  				getNextWebsite(url)
   			else
-  				self.getNextWebsite("NO EMAILS FOUND")
+  				getNextWebsite("NO EMAILS FOUND")
   			end
 
   		end
@@ -111,7 +113,7 @@ class EtayClass < ActiveRecord::Base
 
 
 
-	def self.getNextWebsite(msg)
+	def getNextWebsite(msg)
 		if (msg.include? ".")
 			# url = msg
 			if (@emails.size > 0)
@@ -129,7 +131,7 @@ class EtayClass < ActiveRecord::Base
 	end
   # A simple wrapper around the *nix cal command.
 
-  	def self.storeEmail(url, emails)
+  	def storeEmail(url, emails)
   		# puts url
   		emails.map!{|c| c.downcase.strip}
 		emails.uniq!
@@ -137,6 +139,7 @@ class EtayClass < ActiveRecord::Base
 		emails.reject! {|email| email.include? "example."}
 		emails.reject! {|email| email.include? "domain."}
 		emails.reject! {|email| email.include? ".gif"}
+		emails.reject! {|email| email.include? ".jpg"}
 		# puts emails
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
@@ -164,5 +167,6 @@ t0 = Websites.first
 while TRUE  do
 	websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
 	website = websites[0]
-	EtayClass.getEmails(website)
+	instance = EtayClass.new
+	instance.getEmails(website)
 end
