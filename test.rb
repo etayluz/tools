@@ -16,7 +16,7 @@ class EtayClass
  		@website = website
  		@emails = []
  		@threads = 0
-		puts "Start: " + website.website
+		puts "START: " + website.website
 		url = 'http://' + website.website
 	   	# url = 'http://modulo.com' - fix this - not all threads are returning
 		# url = 'http://immergas.com' #- emails too long
@@ -100,41 +100,22 @@ class EtayClass
 		end
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
-		# puts  @@threads
-		# remainingThreads =  @threads
-		# if (remainingThreads.class.name.include? "NilClass")
-		# 	puts url
-		# 	remainingThreads =  @threads
-		# 	puts remainingThreads
-		# 	puts "Again:" + remainingThreads.class.name
-		# 	return
-		# end
-		# remainingThreads = @threads - 1
 		@threads = @threads - 1
 		storeEmail(url, emails)
   		if (@threads == 0)
-  			begin
-				html_string = open("http://www.google.com", 'r',  :read_timeout=>5){|f|f.read}
-			rescue
-				puts "COULD NOT CONNECT TO INTERNET"
-				return
-			end
-
 			getNextWebsite
-  			# if (@emails.size > 0)
-  			# 	getNextWebsite(url)
-  			# else
-  			# 	getNextWebsite("NO EMAILS FOUND")
-  			# end
-
   		end
 	end
 
 
-
 	def getNextWebsite
-		# if (msg.include? ".")
-			# url = msg
+		begin
+			html_string = open("http://www.google.com", 'r',  :read_timeout=>5){|f|f.read}
+		rescue
+			puts "COULD NOT CONNECT TO INTERNET"
+			return
+		end
+
 		if (@emails.size > 0)
 			puts @website.website + ": " + @emails.join(', ')
 			@website.email = @emails.join(', ')
@@ -144,15 +125,7 @@ class EtayClass
 			@website.email = "zzzzz"
 			@website.save
 		end
-
-		# else
-		# puts msg
-		# end
-		# getEmailsThread=Thread.new{self.getEmails}
-		# getEmailsThread.join
-			
 	end
-  # A simple wrapper around the *nix cal command.
 
   	def storeEmail(url, emails)
   		# puts url
