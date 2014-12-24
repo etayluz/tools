@@ -21,10 +21,20 @@ class EtayClass
 	   	# url = 'http://modulo.com' - fix this - not all threads are returning
 		# url = 'http://immergas.com' #- emails too long
 		# url = 'http://aafcleveland.com' # why is this failing?
+		# url = 'http://rikcorp.jp' # why is this failing?
+		# url = 'http://http://bitwavesolutions.com/' # why can't I get an email out of this one?
+		begin
+			html_string = open("http://www.google.com", 'r',  :read_timeout=>5){|f|f.read}
+		rescue
+			puts "COULD NOT CONNECT TO INTERNET"
+			return
+		end
+
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 		rescue
-			getNextWebsite("COULD NOT OPEN URL: " + url) 
+			puts "COULD NOT OPEN URL: " + url
+			getNextWebsite
 			return
 		end
 		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)   
@@ -53,7 +63,7 @@ class EtayClass
 		# puts hrefs
 		# t0 = self.first
 		if (hrefs.size == 0)
-			getNextWebsite(url)
+			getNextWebsite
 			return
 		end
 		url = Domainatrix.parse(url)
@@ -103,33 +113,41 @@ class EtayClass
 		@threads = @threads - 1
 		storeEmail(url, emails)
   		if (@threads == 0)
-  			if (@emails.size > 0)
-  				getNextWebsite(url)
-  			else
-  				getNextWebsite("NO EMAILS FOUND")
-  			end
+  			begin
+				html_string = open("http://www.google.com", 'r',  :read_timeout=>5){|f|f.read}
+			rescue
+				puts "COULD NOT CONNECT TO INTERNET"
+				return
+			end
+
+			getNextWebsite
+  			# if (@emails.size > 0)
+  			# 	getNextWebsite(url)
+  			# else
+  			# 	getNextWebsite("NO EMAILS FOUND")
+  			# end
 
   		end
 	end
 
 
 
-	def getNextWebsite(msg)
-		if (msg.include? ".")
+	def getNextWebsite
+		# if (msg.include? ".")
 			# url = msg
-			if (@emails.size > 0)
-				puts @website.website + ": " + @emails.join(', ')
-				@website.email = @emails.join(', ')
-				@website.save
-			else
-				puts "No Emails found"
-				@website.email = "zzzzz"
-				@website.save
-			end
-
+		if (@emails.size > 0)
+			puts @website.website + ": " + @emails.join(', ')
+			@website.email = @emails.join(', ')
+			@website.save
 		else
-			puts msg
+			puts @website.website + ": NO EMAILS FOUND"
+			@website.email = "zzzzz"
+			@website.save
 		end
+
+		# else
+		# puts msg
+		# end
 		# getEmailsThread=Thread.new{self.getEmails}
 		# getEmailsThread.join
 			

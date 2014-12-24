@@ -31,5 +31,5 @@ NAVCAT
 	* Password: password5!
 * EXAMPLE QUERY: SELECT name,website FROM apps WHERE website IS NOT NULL
 * EXAMPLE QUERY: UPDATE apps SET website = NULL WHERE website = 'NONE'
-* EXAMPLE QUERY: UPDATE websites SET email = NULL
+* EXAMPLE QUERY: UPDATE websites SET email = NULL WHERE email  = 'zzzzz'
 
