@@ -20,6 +20,7 @@ class EtayClass
 		url = 'http://' + website.website
 	   	# url = 'http://modulo.com' - fix this - not all threads are returning
 		# url = 'http://immergas.com' #- emails too long
+		# url = 'http://aafcleveland.com' # why is this failing?
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
 		rescue
