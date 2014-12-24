@@ -16,7 +16,7 @@ class EtayClass < ActiveRecord::Base
  		@website = website.website
 		puts "Start: " + website.website
 		url = 'http://' + website.website
-	   	# url = 'http://modulo.com'
+	   	# url = 'http://modulo.com' - fix this
 		# url = 'http://maciproject.com'
 	    begin
 			html_string = open(url, 'r',  :read_timeout=>30){|f|f.read}
@@ -24,8 +24,12 @@ class EtayClass < ActiveRecord::Base
 			self.getNextWebsite("COULD NOT OPEN URL: " + url) 
 			return
 		end
-		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)     
-		foundEmails = html_string.scan(emailRejex).uniq
+		emailRejex = Regexp.new(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)   
+		begin  
+			foundEmails = html_string.scan(emailRejex).uniq
+		rescue
+			foundEmails = []
+		end
 		self.storeEmail(url, foundEmails)
 		doc = Nokogiri::HTML(html_string)
 		hrefs = []
@@ -33,7 +37,7 @@ class EtayClass < ActiveRecord::Base
 			href = link.attr("href")
 			# puts href
 			if (!href.nil? && !href.empty? && (!href.downcase.include? ".png") && (!href.downcase.include? "#") \
-				&& (!href.downcase.include? ".jpg") && (!href.downcase.include? ".pdf") )
+				&& (!href.downcase.include? ".jpg") && (!href.downcase.include? ".pdf") && (!href.downcase.include? ".pdf"))
 				begin
 			 		URI.join( url, href ).to_s.downcase
 			 	rescue
@@ -119,7 +123,7 @@ class EtayClass < ActiveRecord::Base
 		else
 			puts msg
 		end
-		getEmailsThread=Thread.new{self.getEmails}
+		# getEmailsThread=Thread.new{self.getEmails}
 		# getEmailsThread.join
 			
 	end
@@ -157,7 +161,8 @@ end
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
 t0 = Websites.first
-websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
-website = websites[0]
-
-EtayClass.getEmails(website)
+while TRUE  do
+	websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
+	website = websites[0]
+	EtayClass.getEmails(website)
+end
