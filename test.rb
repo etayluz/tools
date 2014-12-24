@@ -49,7 +49,7 @@ class EtayClass
 			doc = Nokogiri::HTML(html_string)
 		rescue
 			puts "COULD NOT PARSE HTML: " + url
-			getNextWebsite
+			# getNextWebsite
 			return
 		end
 		hrefs = []
