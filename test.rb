@@ -43,13 +43,13 @@ class EtayClass
 		rescue
 			foundEmails = []
 		end
-		storeEmail(url, foundEmails)
+		storeEmail(foundEmails)
 
 		begin
 			doc = Nokogiri::HTML(html_string)
 		rescue
 			puts "COULD NOT PARSE HTML: " + url
-			# getNextWebsite
+			getNextWebsite
 			return
 		end
 		hrefs = []
@@ -67,6 +67,9 @@ class EtayClass
 		end.compact.uniq
 		hrefs.reject! {|href| !href.include? url}
 		hrefs.uniq!
+		while (hrefs.size > 400) do
+			hrefs.delete_at(hrefs.size-1)
+		end
 		# puts hrefs
 		# t0 = self.first
 		if (hrefs.size == 0)
@@ -108,7 +111,7 @@ class EtayClass
 		url = Domainatrix.parse(url)
 		url = url.domain + "." + url.public_suffix
 		@threads = @threads - 1
-		storeEmail(url, emails)
+		storeEmail(emails)
   		if (@threads == 0)
 			getNextWebsite
   		end
@@ -134,7 +137,7 @@ class EtayClass
 		end
 	end
 
-  	def storeEmail(url, emails)
+  	def storeEmail(emails)
   		# puts url
   		emails.map!{|c| c.downcase.strip}
 		emails.uniq!
@@ -145,21 +148,15 @@ class EtayClass
 		emails.reject! {|email| email.include? ".jpg"}
 		emails.reject! {|email| email.include? ".png"}
 		emails.reject! {|email| email.include? ".js"}
+		emails.reject! {|email| email.include? "email.com"}
+		emails.reject! {|email| email.include? "ourbusiness.com"}
+		emails.reject! {|email| email.include? "youremail"}
+		emails.reject! {|email| email.include? "mail.com"}
 
 		# puts emails
-		url = Domainatrix.parse(url)
-		url = url.domain + "." + url.public_suffix
 		if emails.size > 0
-			# puts emails
-			if  @emails.nil?
-				@emails[url] = []
-			end
 			@emails.concat emails
 			@emails.uniq!
-			# if (@@threads[url] == 0)
-			# 	puts @@emails
-			# end
-			# return emails
 		end
   	end
 end
@@ -172,6 +169,10 @@ ActiveRecord::Base.establish_connection(dbconfig)
 t0 = Websites.first
 while TRUE  do
 	websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
+	if (websites.size == 0)
+		puts "DONE"
+		break
+	end
 	website = websites[0]
 	instance = EtayClass.new
 	instance.getEmails(website)
