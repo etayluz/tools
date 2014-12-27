@@ -159,6 +159,18 @@ class EtayClass
 			@emails.uniq!
 		end
   	end
+
+  	def getTheEmails()
+		while TRUE do
+			websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
+			if (websites.size == 0)
+				puts "DONE"
+				break
+			end
+			website = websites[0]
+			getEmails(website)
+		end
+	end
 end
 
 class Websites < ActiveRecord::Base
@@ -167,13 +179,5 @@ end
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
 t0 = Websites.first
-while TRUE  do
-	websites = Websites.order("RANDOM()").where("websites.email IS NULL").take(1)
-	if (websites.size == 0)
-		puts "DONE"
-		break
-	end
-	website = websites[0]
-	instance = EtayClass.new
-	instance.getEmails(website)
-end
+instance = EtayClass.new
+instance.getTheEmails
