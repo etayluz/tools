@@ -8,6 +8,7 @@ FETCH LINKS
 * curl http://localhost:3000/loadApps to load apps into database
 * curl http://localhost:3000/getWebsites to scrape for app websites
 * Use proxy to avoid being blocked: http://www.freeproxies.org/ or http://www.us-proxy.org/ + MacProxy - download spotflux.com or cyberghost - free VPN
+* Most popular categories: http://www.statista.com/statistics/270291/popular-categories-in-the-app-store/
 
 RAILS APP
 * In root directory: rails new myapp --database=postgresql
@@ -32,4 +33,6 @@ NAVCAT
 * EXAMPLE QUERY: SELECT name,website FROM apps WHERE website IS NOT NULL
 * EXAMPLE QUERY: UPDATE apps SET website = NULL WHERE website = 'NONE'
 * EXAMPLE QUERY: UPDATE websites SET email = NULL WHERE email  = 'zzzzz'
+* EXAMPLE QUERY: SELECT website, email FROM websites WHERE email IS NOT NULL AND email != 'zzzzz'
+* EXAMPLE QUERY: UPDATE apps SET category = 'BUSINESS' 
 

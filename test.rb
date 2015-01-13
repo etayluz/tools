@@ -171,6 +171,70 @@ class EtayClass
 			getEmails(website)
 		end
 	end
+
+	def markForeignWebsites
+		websites = Websites.where("websites.email IS NOT NULL and websites.email != 'zzzzz'")
+		suffixes = []
+		totalEmails = 0
+		totalGmail = 0
+		emailBatch = []
+		websites.each do |website|
+			url = Domainatrix.parse(website.website)
+			if ((url.public_suffix == "com" || url.public_suffix == "net" || url.public_suffix == "us" || 
+				  url.public_suffix == "info" || url.public_suffix == "biz"))
+				emails =  website.email.split(", ")
+				emails.reject! { |email|
+					!((email.include? ".com") || (email.include? ".net") ||  (email.include? ".us") || (email.include? ".tv") || (email.include? ".io")) \
+					|| (email.include? ".com.") || (email.include? ".uk.") || (email.include? "toyota")
+				}
+				while (emails.size > 10) do
+					emails.delete_at(emails.size-1)
+				end
+				if (emails.size > 0)
+					# puts website.website.upcase
+					# puts emails.join(", ")
+					totalEmails += emails.size
+					emails.each { |email|
+						if email.include? "gmail"
+							# totalGmail += 1
+							# puts email
+						end
+					}
+					emailBatch.concat emails
+					# if emailBatch.size > 480
+					# 	# puts emailBatch.join(", ")
+					# 	# puts
+					# 	 emailBatch.each {  |email| File.open("emails.txt", 'a') { |file| file.write(email + ", ") } }
+					# 	 File.open("emails.txt", 'a') { |file| file.write("\n\n") }
+					# 	# File.open("emails.txt", 'w') { |file| file.write("\n") }
+
+					# 	emailBatch = []
+					# end
+				end
+				# puts "total = " + total.to_s
+				# suffixes << url.public_suffix
+			end
+
+		end
+		# puts "Done"
+		emailBatch.uniq!
+		emailBatch.each_with_index {  |email, index_num| 
+			# puts index_num
+			File.open("emails.txt", 'a') { |file| 
+				file.write(email + ", ") 
+				# puts email
+				if (index_num % 500 == 499)
+					# puts index_num
+					file.write("\n\n") 
+				end
+		} 
+}
+		# puts totalGmail
+		# puts totalEmails
+		# suffixes.uniq!
+		# puts suffixes
+
+	end
 end
 
 class Websites < ActiveRecord::Base
@@ -180,4 +244,6 @@ dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
 t0 = Websites.first
 instance = EtayClass.new
-instance.getTheEmails
+instance.markForeignWebsites
+# instance.getTheEmails
+
