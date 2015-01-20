@@ -184,9 +184,15 @@ class EtayClass
 				  url.public_suffix == "info" || url.public_suffix == "biz"))
 				emails =  website.email.split(", ")
 				emails.reject! { |email|
-					!((email.include? ".com") || (email.include? ".net") ||  (email.include? ".us") || (email.include? ".tv") || (email.include? ".io")) \
-					|| (email.include? ".com.") || (email.include? ".uk.") || (email.include? "toyota")
+					!((email.include? ".com") || (email.include? ".net") ||  (email.include? ".us") || (email.include? ".tv") || (email.include? ".io") \
+					|| (email.include? ".com.") || (email.include? ".uk.") || (email.include? "toyota"))
 				}
+
+				emails.reject! { |email|
+					!((email.include? "info@") || (email.include? "jobs@") ||  (email.include? "service@") || (email.include? "admin@") || (email.include? "support@") \
+					|| (email.include? "contact@") || (email.include? "hello@") || (email.include? "hr@") || (email.include? "pr@") || (email.include? "feedback@") \
+					||	(email.include? "sales@") || (email.include? "careers@") || (email.include? "marketing@") || (email.include? "development@") || (email.include? "helpdesk@"))}
+
 				while (emails.size > 10) do
 					emails.delete_at(emails.size-1)
 				end
@@ -220,6 +226,7 @@ class EtayClass
 		emailBatch.uniq!
 		emailBatch.each_with_index {  |email, index_num| 
 			# puts index_num
+			# puts email
 			File.open("emails.txt", 'a') { |file| 
 				file.write(email + ", ") 
 				# puts email
@@ -227,8 +234,9 @@ class EtayClass
 					# puts index_num
 					file.write("\n\n") 
 				end
+			}
 		} 
-}
+
 		# puts totalGmail
 		# puts totalEmails
 		# suffixes.uniq!
