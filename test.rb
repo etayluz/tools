@@ -195,7 +195,7 @@ class EtayClass
 				}
 
 				emails.reject! { |email| # ASKED ME NOT TO SPAM THEM
-					(email.include? "homecrafters.net" || email.include? "globalsedansource.com") 
+					(email.include? "homecrafters.net") || (email.include? "globalsedansource.com") 
 				}
 
 				while (emails.size > 10) do
@@ -235,7 +235,7 @@ class EtayClass
 			File.open("emails.txt", 'a') { |file| 
 				file.write(email + ", ") 
 				# puts email
-				if (index_num % 500 == 499)
+				if (index_num % 500 == 495)
 					# puts index_num
 					file.write("\n\n") 
 				end
