@@ -191,7 +191,12 @@ class EtayClass
 				emails.reject! { |email|
 					!((email.include? "info@") || (email.include? "jobs@") ||  (email.include? "service@") || (email.include? "admin@") || (email.include? "support@") \
 					|| (email.include? "contact@") || (email.include? "hello@") || (email.include? "hr@") || (email.include? "pr@") || (email.include? "feedback@") \
-					||	(email.include? "sales@") || (email.include? "careers@") || (email.include? "marketing@") || (email.include? "development@") || (email.include? "helpdesk@"))}
+					||	(email.include? "sales@") || (email.include? "careers@") || (email.include? "marketing@") || (email.include? "development@") || (email.include? "helpdesk@"))
+				}
+
+				emails.reject! { |email| # ASKED ME NOT TO SPAM THEM
+					(email.include? "homecrafters.net" || email.include? "globalsedansource.com") 
+				}
 
 				while (emails.size > 10) do
 					emails.delete_at(emails.size-1)
