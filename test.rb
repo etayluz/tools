@@ -195,7 +195,7 @@ class EtayClass
 				}
 
 				emails.reject! { |email| # ASKED ME NOT TO SPAM THEM
-					(email.include? "homecrafters.net") || (email.include? "globalsedansource.com") 
+					(email.include? "homecrafters.net") || (email.include? "globalsedansource.com") || (email.include? "digitalageco.com")
 				}
 
 				while (emails.size > 10) do
