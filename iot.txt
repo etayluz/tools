@@ -1,0 +1,17 @@
+http://postscapes.com/companies/internet-of-things-consulting-research-companies?page=1&limit=100
+http://postscapes.com/companies/iot-investment-companies?page=1&limit=100
+http://postscapes.com/companies/internet-of-things-product-design-companies?page=1&limit=200
+http://postscapes.com/companies/internet-of-things-product-design-companies?page=2&limit=50
+http://postscapes.com/companies/iot-hardware-companies?limit=50
+http://postscapes.com/companies/iot-hardware-companies?page=2&limit=50
+http://postscapes.com/companies/iot-hardware-companies?page=3&limit=50
+http://postscapes.com/companies/iot-cloud-services?limit=50
+http://postscapes.com/companies/iot-cloud-services?page=2&limit=50
+http://postscapes.com/companies/iot-cloud-services?page=3&limit=50
+http://postscapes.com/companies/iot-cloud-services?page=4&limit=50
+http://postscapes.com/companies/internet-of-things-system-integrators?page=1&limit=50
+http://postscapes.com/companies/internet-of-things-system-integrators?page=2&limit=50
+http://postscapes.com/companies/internet-of-things-system-integrators?page=3&limit=50
+http://postscapes.com/companies/internet-of-things-system-integrators?page=4&limit=50
+http://postscapes.com/companies/internet-of-things-associations-education?page=1&limit=100
+http://postscapes.com/companies/internet-of-things-data-analysis?page=1&limit=100
